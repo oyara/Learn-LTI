@@ -141,7 +141,7 @@ process {
     #endregion
     
     #region Delete Resource Group, if Exists
-    Write-Title 'STEP #4 - Delete Resource Group'
+    Write-Title 'STEP #5 - Delete Resource Group'
     az group delete --name $ResourceGroupName --yes
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to delete Resource Group [ $ResourceGroup ] and its Child Resources"
@@ -149,7 +149,7 @@ process {
     #endregion
 
     #region Delete App Registration, if Exists
-    Write-Title 'STEP #5 - Delete App Registration'
+    Write-Title 'STEP #6 - Delete App Registration'
     $AppInfo = (az ad app list --display-name $AppName) | ConvertFrom-Json
     if (!$AppInfo) {
         throw "Unable to find App Registration with Name [ $AppName ]"
