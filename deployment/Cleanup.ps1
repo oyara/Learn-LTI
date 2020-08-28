@@ -144,7 +144,7 @@ process {
     Write-Title 'STEP #5 - Delete Resource Group'
     az group delete --name $ResourceGroupName --yes
     if ($LASTEXITCODE -ne 0) {
-        throw "Unable to delete Resource Group [ $ResourceGroup ] and its Child Resources"
+        throw "Unable to delete Resource Group [ $ResourceGroupName ] and its Child Resources"
     }
     #endregion
 
