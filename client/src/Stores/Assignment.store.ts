@@ -4,10 +4,14 @@ import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 
+export type SaveResult = 'error' | 'success';
+
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
+  @observable updateSaveResult: SaveResult | null = null;
+  @observable changeSaveResult: SaveResult | null = null;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
@@ -21,18 +25,20 @@ export class AssignmentStore extends ChildStore {
   }
 
   @action
-  updateAssignmentDeadline(newDeadline: Date): void {
+  async updateAssignmentDeadline(newDeadline: Date): Promise<void> {
     if (this.assignment) {
       this.assignment.deadline = newDeadline;
-      AssignmentService.updateAssignment(this.assignment);
+      const hasErrors = await AssignmentService.updateAssignment(this.assignment);
+      this.updateSaveResult = hasErrors ? 'error' : 'success';
     }
   }
 
   @action
-  updateAssignmentDescription(newDescription: string): void {
+  async updateAssignmentDescription(newDescription: string): Promise<void> {
     if (this.assignment) {
       this.assignment.description = newDescription;
-      AssignmentService.updateAssignment(this.assignment);
+      const hasErrors = await AssignmentService.updateAssignment(this.assignment);
+      this.updateSaveResult = hasErrors ? 'error' : 'success';
     }
   }
 
@@ -40,11 +46,12 @@ export class AssignmentStore extends ChildStore {
   async changeAssignmentPublishStatus(newPublishStatus: boolean): Promise<void> {
     if (this.assignment) {
       this.isChangingPublishState = true;
-      const isStatusChanged = await AssignmentService.changeAssignmentPublishStatus(
+      const hasErrors = await AssignmentService.changeAssignmentPublishStatus(
         this.assignment.id,
         newPublishStatus
       );
-      if (isStatusChanged) {
+      this.changeSaveResult = hasErrors ? 'error' : 'success';
+      if (this.changeSaveResult === 'success') {
         this.assignment.publishStatus = newPublishStatus ? 'Published' : 'NotPublished';
       }
       this.isChangingPublishState = false;

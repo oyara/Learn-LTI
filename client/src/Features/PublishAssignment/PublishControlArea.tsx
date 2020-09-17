@@ -17,7 +17,7 @@ const PublishControlAreaInner = ({ styles }: IStylesOnly<PublishControlAreaStyle
   return useObserver(() => (
     <div className={classes.root}>
       <PublishStatusIndicator />
-      {assignmentStore.assignment && (
+      {assignmentStore.changeSaveResult==='success' ? assignmentStore.assignment && (
         <AutohideMessageBar
           messageBarType={MessageBarType.success}
           isMultiline={false}
@@ -27,6 +27,15 @@ const PublishControlAreaInner = ({ styles }: IStylesOnly<PublishControlAreaStyle
           }
         >
           Your assignment was published successfully
+        </AutohideMessageBar>
+      ) : (
+        <AutohideMessageBar
+          messageBarType={MessageBarType.error}
+          isMultiline={false}
+          className={classes.messageBar}
+          showMessageBar={ assignmentStore.isChangingPublishState === false }
+        >
+          Your assignment was not published successfully. Please try again.
         </AutohideMessageBar>
       )}
       <PublishActionButtons />
